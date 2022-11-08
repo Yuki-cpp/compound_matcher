@@ -22,10 +22,15 @@ pip install https://github.com/Yuki-cpp/compound_matcher/archive/master.zip
 ## Linux
 
 ```shell
-compound_matcher -h
+rt-matcher -h
+
+metabolite-finder -h
 ```
 
 ## Windows
 ```shell
-python -m compound_matcher.find_matches -h
+python -m rt_matcher.find_matches -h
+
+
+python -m rt_matcher.find_metabolites -h
 ```
