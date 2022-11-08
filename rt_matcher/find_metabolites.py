@@ -54,6 +54,12 @@ def _parse_args():
         help="Enables fuzzy matching. When fuzzy matching is enabled, similarity between counpound names uses Levenshtein Distance instead of requiring an exact match",
     )
 
+    optional.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Interactive fuzzy maching. When set, all fuzzy matches will require the user confirmation to be outputed",
+    )
+
     parser.add_argument(
         "-o",
         "--output",
@@ -77,11 +83,10 @@ def main():
 
     for line in args.inventory.readlines():
         split = line.split(",")
-        inventory.append((split[0], split[1].strip()))
-        print((split[0], split[1].strip()))
+        inventory.append((split[0].strip(), split[1].strip()))
 
     if args.output:
-        args.output.write(f"molecule, location, matching name\n")
+        args.output.write("molecule, location, matching name\n")
 
     for m in molecules:
         found = False
@@ -94,15 +99,25 @@ def main():
                 else len(fuzzysearch.find_near_matches(m, m2, max_l_dist=1)) > 0
             )
             if is_matching:
-                if not found:
+
+                if args.interactive and is_matching and m != m2:
+                    answer = input(f"Is {m} // {m2} a valid match? [Y/n]")
+                    if answer.upper() in ["Y", "YES"]:
+                        pass
+                    elif answer.upper() in ["N", "NO"]:
+                        continue
+
+                if not found and not args.output:
                     print(f"{m} can be found in:")
                     found = True
-                print(f"\t-{loc}  (as {m2})")
 
-            if args.output:
-                args.output.write(f"{m}, {loc}, {m2}\n")
+                if not args.output:
+                    print(f"\t-{loc}  (as {m2})")
 
-        if not found:
+                if args.output:
+                    args.output.write(f"{m}, {loc}, {m2}\n")
+
+        if not found and not args.output:
             print(f"{m} can not be found")
 
 

@@ -127,6 +127,14 @@ def main():
                 feature_compound, library_compound, args.use_fuzzy_matching, args.tolerance
             )
             if match is not None:
+
+                if args.interactive and not match.is_exact:
+                    answer = input(f"Is {match.lhs.name} // {match.rhs.name} a valid match? [Y/n]")
+                    if answer.upper() in ["Y", "YES"]:
+                        pass
+                    elif answer.upper() in ["N", "NO"]:
+                        continue
+
                 if args.name_only or match.is_within_tolerance:
                     matches.append(match)
 
