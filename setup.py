@@ -11,6 +11,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": [
+            "metabolite-finder=rt_matcher.find_metabolites:main",
             "rt-matcher=rt_matcher.find_matches:main",
         ],
     },
