@@ -25,7 +25,7 @@ import fuzzysearch
 def _parse_args():
 
     parser = argparse.ArgumentParser(
-        prog="rt-matching",
+        prog="metabolites-finder",
         description="Find molecules in the inventory",
         epilog="Plz Gib Moar Moni",
     )
@@ -68,23 +68,6 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _print_matches(matches):
-    for match in matches:
-        qualifier = "FUZZY" if not match.is_exact else "EXACT"
-        print(f"{qualifier} match found: {match.lhs}) -- {match.rhs}")
-
-
-def _save_matches(matches, out):
-    for match in matches:
-        fuzzy_qualifier = "EXACT" if match.is_exact else "FUZZY"
-        tolerance_qualifier = (
-            "WITHIN_TOLERANCE" if match.is_within_tolerance else "OUTSIDE_OF_TOLERANCE"
-        )
-        out.write(
-            f"{match.lhs.name}, {match.lhs.rt_value}, {match.rhs.name}, {match.rhs.rt_value}, {fuzzy_qualifier}, {tolerance_qualifier}\n"
-        )
-
-
 def main():
 
     args = _parse_args()
@@ -97,15 +80,27 @@ def main():
         inventory.append((split[0], split[1].strip()))
         print((split[0], split[1].strip()))
 
+    if args.output:
+        args.output.write(f"molecule, location, matching name\n")
+
     for m in molecules:
         found = False
 
         for m2, loc in inventory:
-            if len(fuzzysearch.find_near_matches(m, m2, max_l_dist=1)) > 0:
+
+            is_matching = (
+                m == m2
+                if not args.use_fuzzy_matching
+                else len(fuzzysearch.find_near_matches(m, m2, max_l_dist=1)) > 0
+            )
+            if is_matching:
                 if not found:
                     print(f"{m} can be found in:")
                     found = True
                 print(f"\t-{loc}  (as {m2})")
+
+            if args.output:
+                args.output.write(f"{m}, {loc}, {m2}\n")
 
         if not found:
             print(f"{m} can not be found")
