@@ -25,7 +25,7 @@ from fuzzysearch import find_near_matches
 def _parse_args():
 
     parser = argparse.ArgumentParser(
-        prog="compound_matcher",
+        prog="rt-matching",
         description="Find matches between two list of conpounds (Peak and Metabolites) based on their name and RT values. Each list is given as a CSV file with each entry formatted as follows: 'entry name' , 'entry RT value'",
         epilog="Plz Gib Moni",
     )
@@ -34,16 +34,16 @@ def _parse_args():
     required = parser.add_argument_group("required arguments")
 
     required.add_argument(
-        "-p",
-        "--peak",
-        help="CSV input file for the first list of conpounds (Peak)",
+        "-F",
+        "--features",
+        help="CSV input file for the list of features",
         type=argparse.FileType("r"),
         required=True,
     )
     required.add_argument(
-        "-m",
-        "--metabolites",
-        help="CSV input file for second list of conpounds (Metabolite)",
+        "-L",
+        "--library",
+        help="CSV input file for the compound library",
         type=argparse.FileType("r"),
         required=True,
     )

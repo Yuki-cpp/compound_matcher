@@ -2,16 +2,16 @@ import setuptools
 
 
 setuptools.setup(
-    name="compound_matcher",
+    name="rt_matcher",
     version="1.0.0",
     author="Leo Ghafari",
     author_email="leo.ghafari@gmail.com",
-    description="Tool providing matching between compounds depending on their RT values",
+    description="Tool allowing to Fuzzy search a library for a set of features",
     install_requires=["fuzzysearch"],
     packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": [
-            "compound_matcher=compound_matcher.find_matches:main",
+            "rt-matcher=rt_matcher.find_matches:main",
         ],
     },
     classifiers=[
