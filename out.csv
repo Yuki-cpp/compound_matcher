@@ -1,0 +1,58 @@
+molecule, location, matching name
+Fumaric acid, Ambient, Fumaric acid
+L-Glutamic acid, freezerQtrap, L-Glutamic acid
+L-Glutamic acid, freezerQtrap, N-2-4-DNP-Glutamic acid
+L-Glutamic acid, Ambient, L-Glutamic acid
+L-Alanine, freezerQtrap, L-Alanine
+L-Alanine, Ambient, D-Alanine
+L-Alanine, HILIC, L-Alanine
+L-Alanine, mix B2, D-Alanine
+L-Aspartic acid, Ambient, L-Aspartic acid
+L-Aspartic acid, mix A2, L-Aspartic acid
+Ornithine, Ambient, Ornithine
+Ornithine, HILIC, L-Ornithine
+Ornithine, mix G1, Ornithine
+Ornithine, PM5 A, Ornithine
+Oxalacetic acid, PM5 A, Oxaloacetic acid
+Pyruvic acid, freezerQtrap, Pyruvic acid
+Urea, Ambient, Urea
+Urea, HILIC, Urate
+Urea, PM3 B, Urea
+L-Arginine, Ambient, L-Arginine
+L-Arginine, HILIC, L-Arginine
+L-Arginine, mix C1, L-Arginine
+Adenosine triphosphate, freezer20, Adenosine triphosphate
+L-Glutamine, Ambient, L-Glutamine
+L-Glutamine, HILIC, L-Glutamine
+L-Glutamine, HILIC, N-Acetyl-L-Glutamine
+L-Glutamine, mix C1, L-Glutamine
+Choline, Biocratres std mix, Choline
+Choline, HILIC, Choline
+Choline, mix chill pill, Choline
+Choline, PM5 D, Choline
+Ethanolamine, PM3 C, Ethanolamine
+L-Serine, freezerQtrap, L-Serine
+L-Serine, Ambient, L-Serine
+L-Serine, HILIC, L-Serine
+L-Serine, mix B2, L-Serine
+Adenosine triphosphate, freezer20, Adenosine triphosphate
+ADP, mix A1, ADP
+Fumaric acid, Ambient, Fumaric acid
+L-Glutamic acid, freezerQtrap, L-Glutamic acid
+L-Glutamic acid, Ambient, L-Glutamic acid
+L-Asparagine, fridge4, L-Asparagine
+L-Asparagine, HILIC, L-Asparagine
+L-Aspartic acid, Ambient, L-Aspartic acid
+L-Aspartic acid, mix A2, L-Aspartic acid
+L-Arginine, Ambient, L-Arginine
+L-Arginine, HILIC, L-Arginine
+L-Arginine, mix C1, L-Arginine
+Adenosine triphosphate, freezer20, Adenosine triphosphate
+L-Glutamine, Ambient, L-Glutamine
+L-Glutamine, HILIC, L-Glutamine
+L-Glutamine, mix C1, L-Glutamine
+Malonic acid, Ambient, Malonic acid
+Malonic acid, mix G1, Malonic acid
+Citrulline, Ambient, Citrulline
+Citrulline, mix B2, Citrulline
+Citrulline, PM5 A, Citrulline
