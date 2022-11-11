@@ -19,13 +19,13 @@
 
 
 import argparse
-from fuzzysearch import find_near_matches
+import rt_matcher.compound as rt
 
 
 def _parse_args():
 
     parser = argparse.ArgumentParser(
-        prog="compound_matcher",
+        prog="rt-matching",
         description="Find matches between two list of conpounds (Peak and Metabolites) based on their name and RT values. Each list is given as a CSV file with each entry formatted as follows: 'entry name' , 'entry RT value'",
         epilog="Plz Gib Moni",
     )
@@ -34,16 +34,16 @@ def _parse_args():
     required = parser.add_argument_group("required arguments")
 
     required.add_argument(
-        "-p",
-        "--peak",
-        help="CSV input file for the first list of conpounds (Peak)",
+        "-F",
+        "--features",
+        help="CSV input file for the list of features",
         type=argparse.FileType("r"),
         required=True,
     )
     required.add_argument(
-        "-m",
-        "--metabolites",
-        help="CSV input file for second list of conpounds (Metabolite)",
+        "-L",
+        "--library",
+        help="CSV input file for the compound library",
         type=argparse.FileType("r"),
         required=True,
     )
@@ -60,6 +60,12 @@ def _parse_args():
         "--use-fuzzy-matching",
         action="store_true",
         help="Enables fuzzy matching. When fuzzy matching is enabled, similarity between counpound names uses Levenshtein Distance instead of requiring an exact match",
+    )
+
+    optional.add_argument(
+        "--name-only",
+        action="store_true",
+        help="Only perform matching on compounds names.",
     )
 
     optional.add_argument(
@@ -85,24 +91,19 @@ def _parse_args():
 
 def _print_matches(matches):
     for match in matches:
-        qualifier = "FUZZY" if match["fuzzy"] else "EXACT"
-        k1 = match["k1"]
-        v1 = match["v1"]
-        k2 = match["k2"]
-        v2 = match["v2"]
-
-        print(f"{qualifier} match found: {k1} (RT {v1}) -- {k2} (RT {v2})")
+        qualifier = "FUZZY" if not match.is_exact else "EXACT"
+        print(f"{qualifier} match found: {match.lhs}) -- {match.rhs}")
 
 
 def _save_matches(matches, out):
     for match in matches:
-        qualifier = "FUZZY" if match["fuzzy"] else "EXACT"
-        k1 = match["k1"]
-        v1 = match["v1"]
-        k2 = match["k2"]
-        v2 = match["v2"]
-
-        out.write(f"{k1}, {v1}, {k2}, {v2}, {qualifier}\n")
+        fuzzy_qualifier = "EXACT" if match.is_exact else "FUZZY"
+        tolerance_qualifier = (
+            "WITHIN_TOLERANCE" if match.is_within_tolerance else "OUTSIDE_OF_TOLERANCE"
+        )
+        out.write(
+            f"{match.lhs.name}, {match.lhs.rt_value}, {match.rhs.name}, {match.rhs.rt_value}, {fuzzy_qualifier}, {tolerance_qualifier}\n"
+        )
 
     print(f"{len(matches)} entries written...")
 
@@ -111,40 +112,31 @@ def main():
 
     args = _parse_args()
 
-    peak = {}
-    for line in args.peak.readlines():
-        split = line.split(",")
-        peak[split[0]] = float(split[1])
+    features = []
+    for line in args.features.readlines():
+        features.append(rt.Compound.from_string(line))
 
-    metabolites = {}
-    for line in args.metabolites.readlines():
-        split = line.split(",")
-        metabolites[split[0]] = float(split[1])
-
-    def fuzzy_match(k1, k2):
-        is_potential_match = len(find_near_matches(k1, k2, max_l_dist=1)) > 0
-
-        if args.interactive and is_potential_match and k1 != k2:
-            answer = input(f"Is {k1} // {k2} a valid match? [Y/n]")
-            if answer.upper() in ["Y", "YES"]:
-                return True
-            elif answer.upper() in ["N", "NO"]:
-                return False
-
-        return is_potential_match
-
-    def exact_match(k1, k2):
-        return k1 == k2
-
-    matcher = fuzzy_match if args.use_fuzzy_matching else exact_match
+    library = []
+    for line in args.library.readlines():
+        library.append(rt.Compound.from_string(line))
 
     matches = []
-    for key, value in peak.items():
-        for key2, value2 in metabolites.items():
-            if abs(value2 - value) < args.tolerance and matcher(key, key2):
-                matches.append(
-                    {"k1": key, "k2": key2, "v1": value, "v2": value2, "fuzzy": key != key2}
-                )
+    for feature_compound in features:
+        for library_compound in library:
+            match = rt.Match.make(
+                feature_compound, library_compound, args.use_fuzzy_matching, args.tolerance
+            )
+            if match is not None:
+
+                if args.interactive and not match.is_exact:
+                    answer = input(f"Is {match.lhs.name} // {match.rhs.name} a valid match? [Y/n]")
+                    if answer.upper() in ["Y", "YES"]:
+                        pass
+                    elif answer.upper() in ["N", "NO"]:
+                        continue
+
+                if args.name_only or match.is_within_tolerance:
+                    matches.append(match)
 
     if args.output:
         _save_matches(matches, args.output)
